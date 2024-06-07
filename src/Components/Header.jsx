@@ -55,7 +55,7 @@ function Header(props) {
         >
           <FaMoon />
         </Button>
-        <Link to="/login">
+        <Link to="/signup">
           <Button gradientDuoTone="purpleToPink" outline>
             SignIn
           </Button>
