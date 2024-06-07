@@ -1,11 +1,23 @@
-import { Button, Navbar, TextInput } from "flowbite-react";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownDivider,
+  Navbar,
+  TextInput,
+} from "flowbite-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaMoon } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
+import { toggleTheme } from "../Redux/Slice/themeSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Header(props) {
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
+  const { currentuser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
   return (
     <Navbar className="border-b-2">
       <div className="flex gap-2 md:order-2">
@@ -47,20 +59,46 @@ function Header(props) {
         >
           <CiSearch />
         </Button>
-        <Button
-          className="w-12 h-10 hidden sm:inline"
-          gradientDuoTone="purpleToPink"
-          outline
-          pill
-        >
-          <FaMoon />
-        </Button>
-        <Link to="/signup">
-          <Button gradientDuoTone="purpleToPink" outline>
-            SignIn
+        <div className="flex gap-2 md:order-2">
+          <Button
+            className="w-12 h-10 hidden sm:inline"
+            gradientDuoTone="purpleToPink"
+            pill
+            onClick={() => dispatch(toggleTheme())}
+          >
+            {theme === "light" ? <FaMoon /> : <FaSun />}
           </Button>
-        </Link>
-        <Navbar.Toggle />
+          {currentuser ? (
+            <Dropdown
+              arrowIcon={false}
+              inline
+              label={
+                <Avatar
+                  alt="user"
+                  img={currentuser.rest.profilePicture}
+                  rounded
+                />
+              }
+            >
+              <Dropdown.Header>
+                <span className="block text-sm">
+                  {currentuser.rest.username}
+                </span>
+              </Dropdown.Header>
+              <Link to="/dashboard?tab=profile">
+                <Dropdown.Item>Profile</Dropdown.Item>
+              </Link>
+              <DropdownDivider />
+              <Dropdown.Item>Sign Out</Dropdown.Item>
+            </Dropdown>
+          ) : (
+            <Link to="/signin">
+              <Button gradientDuoTone="purpleToPink">SignIn</Button>
+            </Link>
+          )}
+
+          <Navbar.Toggle />
+        </div>
       </div>
     </Navbar>
   );
